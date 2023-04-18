@@ -23,8 +23,8 @@ const Register = () => {
   };
 
   return (
-    <div>
-      <h4>Please Register</h4>
+    <div className="w-50 mx-auto">
+      <h4 className="text-primary">Please Register</h4>
       <form onSubmit={handleSubmit}>
         <input onChange={handleEmailChange} type="email" name="email" id="email" placeholder="Your Email..." />
         <br />
