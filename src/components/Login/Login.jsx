@@ -1,5 +1,10 @@
+import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
 import { useState } from "react";
 import { Form, Button } from "react-bootstrap";
+import app from "../../firebase/firebase.config";
+import { Link } from "react-router-dom";
+
+const auth = getAuth(app);
 
 const Login = () => {
   const [error, setError] = useState(" ");
@@ -18,17 +23,36 @@ const Login = () => {
     setError(" ");
     setSuccess(" ");
 
-    if (!/(?=.*[A-Z].*[A-Z])/.test(password)) {
-      setError("Please add at least two uppercase.");
+    if (!/(?=.*[A-Z])/.test(password)) {
+      setError("Please provide at least 'one uppercase'");
       return;
-    } else if (!/(?=.*[!@#$&*])/.test(password)) {
-      setError("Please add a special character.");
+    } else if (!/(?=.*[a-z])/.test(password)) {
+      setError("Please provide at least 'one lowercase'");
       return;
-    } else if (password.length < 6) {
-      setError("Password must be 6 characters long");
+    } else if (!/(?=.*[0-9])/.test(password)) {
+      setError("Please provide at least 'one number'");
+      return;
+    } else if (password.length < 8) {
+      setError("Please add at least 8 characters in your password!");
       return;
     }
+
+    signInWithEmailAndPassword(auth, email, password)
+      .then((result) => {
+        const loggedUser = result.user;
+        if(!loggedUser.emailVerified){
+
+        }
+        console.log(loggedUser);
+        setSuccess("User login successfully!");
+        setError(" ");
+      })
+      .catch((error) => {
+        setError(error.message);
+      });
   };
+
+  
 
   return (
     <div className="w-25 mx-auto">
@@ -53,6 +77,11 @@ const Login = () => {
         </Button>
       </Form>
 
+      <p>
+        <small>
+          Are you new to this website? Please <Link to="/register">Register</Link>
+        </small>
+      </p>
       <p className="text-danger">{error}</p>
       <p className="text-success">{success}</p>
     </div>
